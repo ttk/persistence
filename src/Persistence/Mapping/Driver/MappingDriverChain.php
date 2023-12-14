@@ -73,7 +73,7 @@ class MappingDriverChain implements MappingDriver
     public function loadMetadataForClass(string $className, ClassMetadata $metadata)
     {
         foreach ($this->drivers as $namespace => $driver) {
-            if (strpos($className, $namespace) === 0) {
+            if (preg_match('/^' . preg_quote($namespace) . '\\\\/',$className)) {
                 $driver->loadMetadataForClass($className, $metadata);
 
                 return;
@@ -105,7 +105,7 @@ class MappingDriverChain implements MappingDriver
             }
 
             foreach ($driverClasses[$oid] as $className) {
-                if (strpos($className, $namespace) !== 0) {
+                if (!preg_match('/^' . preg_quote($namespace) . '\\\\/',$className)) {
                     continue;
                 }
 
@@ -128,7 +128,7 @@ class MappingDriverChain implements MappingDriver
     public function isTransient(string $className)
     {
         foreach ($this->drivers as $namespace => $driver) {
-            if (strpos($className, $namespace) === 0) {
+            if (preg_match('/^' . preg_quote($namespace) . '\\\\/',$className)) {
                 return $driver->isTransient($className);
             }
         }
